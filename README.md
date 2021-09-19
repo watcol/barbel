@@ -8,15 +8,12 @@
 A Vim/Neovim colorscheme creation tool.
 
 ## Installation 
-# Stable (comming soon...)
-# Development version
+### Stable (comming soon...)
+### Development version
 ```shell
 $ cargo install --git https://github.com/watcol/farbe
 ```
 (Requires `cargo`)
-
-## Author
-- ![watcol](https://raw.githubusercontent.com/watcol/icons/main/32/normal.png) watcol
 
 ## License
 Farbe is licensed under the MIT license. See [LICENSE](https://github.com/watcol/farbe/blob/main/LICENSE) for details.
