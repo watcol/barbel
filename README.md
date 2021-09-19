@@ -1,4 +1,4 @@
-# Farbe
+# 🎨 [WIP] Farbe
 ![status](https://img.shields.io/badge/status-WIP-red)
 [![Crates.io](https://img.shields.io/crates/v/farbe)](https://crates.io/crates/farbe)
 [![Downloads](https://img.shields.io/crates/d/farbe)](https://crates.io/crates/farbe)
