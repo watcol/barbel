@@ -8,7 +8,7 @@
 A Vim/Neovim colorscheme creation tool.
 
 ## Installation 
-### Stable (comming soon...)
+### Stable version (comming soon...)
 ### Development version
 ```shell
 $ cargo install --git https://github.com/watcol/farbe
