@@ -7,6 +7,14 @@
 
 A Vim/Neovim colorscheme creation tool.
 
+## Features
+- [ ] Configuration by TOML.
+  - [ ] Separating configuration files.
+  - [ ] Import files via HTTP.
+  - [ ] Support conditional branching.
+- [ ] Generating fast, minimal vim script.
+  - [ ] Support custom templates.
+
 ## Installation 
 ### Stable version (comming soon...)
 ### Development version
