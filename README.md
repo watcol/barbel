@@ -1,4 +1,4 @@
-# [WIP] Barbel
+# 🐟 [WIP] Barbel
 ![status](https://img.shields.io/badge/status-WIP-red)
 [![Crates.io](https://img.shields.io/crates/v/barbel)](https://crates.io/crates/barbel)
 [![Downloads](https://img.shields.io/crates/d/barbel)](https://crates.io/crates/barbel)
