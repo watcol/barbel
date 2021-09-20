@@ -1,6 +1,7 @@
 use serde::Deserialize;
-use std::{fs::File, io::Read, path::PathBuf};
+use std::{collections::HashMap, fs::File, io::Read, path::PathBuf};
 use structopt::StructOpt;
+use toml::Value;
 
 #[derive(StructOpt, Debug)]
 struct Opts {
@@ -10,18 +11,28 @@ struct Opts {
         default_value = "farbe/main.toml"
     )]
     entry: PathBuf,
+    #[structopt(short, long, help = "The output directory", default_value = "target")]
+    outdir: PathBuf,
 }
 
 #[derive(Deserialize, Debug)]
 struct Entry {
-    #[serde(rename = "colorscheme")]
-    metadata: Metadata,
+    #[serde(flatten)]
+    global: HashMap<String, Value>,
+    #[serde(default)]
+    include: Vec<PathBuf>,
+    #[serde(default)]
+    renderer: Vec<Renderer>,
 }
 
 #[derive(Deserialize, Debug)]
-struct Metadata {
-    name: String,
-    author: String,
+struct Renderer {
+    source: String,
+    output: Option<String>,
+    #[serde(default)]
+    include: Vec<PathBuf>,
+    #[serde(flatten)]
+    table: HashMap<String, Value>,
 }
 
 fn main() {
