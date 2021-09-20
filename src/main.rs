@@ -8,7 +8,7 @@ struct Opts {
     #[structopt(
         name = "FILE",
         help = "The entry configuration file",
-        default_value = "farbe/main.toml"
+        default_value = "barbel/main.toml"
     )]
     entry: PathBuf,
     #[structopt(short, long, help = "The output directory", default_value = "target")]
