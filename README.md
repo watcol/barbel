@@ -1,27 +1,29 @@
-# 🎨 [WIP] Farbe
+# [WIP] Barbel
 ![status](https://img.shields.io/badge/status-WIP-red)
-[![Crates.io](https://img.shields.io/crates/v/farbe)](https://crates.io/crates/farbe)
-[![Downloads](https://img.shields.io/crates/d/farbe)](https://crates.io/crates/farbe)
-[![Downloads (latest)](https://img.shields.io/crates/dv/farbe)](https://crates.io/crates/farbe)
-[![License](https://img.shields.io/crates/l/farbe)](https://github.com/watcol/farbe/blob/main/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/barbel)](https://crates.io/crates/barbel)
+[![Downloads](https://img.shields.io/crates/d/barbel)](https://crates.io/crates/barbel)
+[![Downloads (latest)](https://img.shields.io/crates/dv/barbel)](https://crates.io/crates/barbel)
+[![License](https://img.shields.io/crates/l/barbel)](https://github.com/watcol/barbel/blob/main/LICENSE)
 
-A Vim/Neovim colorscheme creation tool.
+Barbel is a document generator framework. By using distributed templates called "renderer",
+you can easily create and maintain various type of documents, setting scripts, etc.
 
 ## Features
-- [ ] Configuration by TOML.
-  - [ ] Separating configuration files.
-  - [ ] Import files via HTTP.
-  - [ ] Support conditional branching.
-- [ ] Generating fast, minimal vim script.
-  - [ ] Support custom templates.
+- For user
+  - [ ] Configuration using TOML
+  - [ ] Global options across renderers
+- For developer
+  - [ ] Handlebars template engine
+  - [ ] Handlebars helper script
 
 ## Installation 
 ### Stable version (comming soon...)
 ### Development version
 ```shell
-$ cargo install --git https://github.com/watcol/farbe
+$ cargo install --git https://github.com/watcol/barbel
 ```
 (Requires `cargo`)
 
 ## License
-Farbe is licensed under the MIT license. See [LICENSE](https://github.com/watcol/farbe/blob/main/LICENSE) for details.
+Barbel is licensed under the MIT license. See [LICENSE](https://github.com/watcol/barbel/blob/main/LICENSE)
+for details.
