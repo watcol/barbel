@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/crates/l/barbel)](https://github.com/watcol/barbel/blob/main/LICENSE)
 
 Barbel is a document generator framework. By using distributed templates called "renderer",
-you can easily create and maintain various type of documents, setting scripts, etc.
+you can easily create and maintain various types of documents, setting scripts, etc.
 
 ## Features
 - For user
