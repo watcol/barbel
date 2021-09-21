@@ -23,6 +23,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "barbel"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "structopt",
+ "toml",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -41,15 +50,6 @@ dependencies = [
  "textwrap",
  "unicode-width",
  "vec_map",
-]
-
-[[package]]
-name = "farbe"
-version = "0.1.0"
-dependencies = [
- "serde",
- "structopt",
- "toml",
 ]
 
 [[package]]
