@@ -11,7 +11,12 @@ struct Opts {
         default_value = "barbel/main.toml"
     )]
     entry: PathBuf,
-    #[structopt(short, long, help = "The output directory", default_value = "target")]
+    #[structopt(
+        short,
+        long,
+        help = "The output directory",
+        default_value = "target"
+    )]
     outdir: PathBuf,
 }
 
