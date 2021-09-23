@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::{collections::HashMap, str::FromStr};
 use toml::Value;
 
-use super::uri::Uri;
+use super::address::Address;
 
 #[derive(Clone, Debug, Deserialize)]
 struct TomlEntry {
@@ -14,7 +14,7 @@ struct TomlEntry {
 }
 
 impl TomlEntry {
-    fn into_entry(self, origin: &Uri) -> anyhow::Result<Entry> {
+    fn into_entry(self, origin: &Address) -> anyhow::Result<Entry> {
         Ok(Entry {
             renderer: self
                 .renderer
@@ -34,7 +34,7 @@ struct TomlRenderer {
 }
 
 impl TomlRenderer {
-    fn into_renderer(self, origin: &Uri) -> anyhow::Result<Renderer> {
+    fn into_renderer(self, origin: &Address) -> anyhow::Result<Renderer> {
         Ok(Renderer {
             source: self.source,
             config: self.config.into_config(origin)?,
@@ -45,7 +45,7 @@ impl TomlRenderer {
 #[derive(Clone, Debug, Deserialize)]
 struct TomlConfig {
     #[serde(default)]
-    include: Vec<Uri>,
+    include: Vec<Address>,
     #[serde(flatten)]
     table: HashMap<String, Value>,
 }
@@ -53,14 +53,14 @@ struct TomlConfig {
 impl TomlConfig {
     fn into_config(
         self,
-        origin: &Uri,
+        origin: &Address,
     ) -> anyhow::Result<HashMap<String, Value>> {
         let mut map = HashMap::new();
-        for uri in self.include {
-            let uri = origin.join(&uri)?;
-            let s = uri.get()?;
+        for address in self.include {
+            let address = origin.join(&address)?;
+            let s = address.get()?;
             let config: TomlConfig = toml::from_str(&s)?;
-            map.extend(config.into_config(&uri)?);
+            map.extend(config.into_config(&address)?);
         }
         map.extend(self.table);
         Ok(map)
@@ -80,10 +80,10 @@ pub struct Renderer {
 }
 
 pub fn parse<P: AsRef<str>>(path: P) -> anyhow::Result<Entry> {
-    let uri = Uri::from_str(path.as_ref())
+    let address = Address::from_str(path.as_ref())
         .ok()
         .context("Uri parsing error")?;
-    let s = uri.get()?;
+    let s = address.get()?;
     let toml_entry: TomlEntry = toml::from_str(&s)?;
-    toml_entry.into_entry(&uri)
+    toml_entry.into_entry(&address)
 }
