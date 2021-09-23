@@ -1,3 +1,4 @@
+mod assets;
 mod parse;
 
 use std::path::PathBuf;

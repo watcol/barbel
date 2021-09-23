@@ -1,10 +1,10 @@
-use std::{fmt, fs::File, io::Read, path::PathBuf, str::FromStr};
-
+use crate::assets::{get_file, get_http};
 use anyhow::Context;
 use serde::{
     de::{self, Deserializer, Visitor},
     Deserialize,
 };
+use std::{fmt, path::PathBuf, str::FromStr};
 use url::Url;
 
 /// Local path or URL(HTTP).
@@ -32,17 +32,10 @@ impl FromStr for Address {
 impl Address {
     /// Get text data from this address.
     pub fn get(&self) -> anyhow::Result<String> {
-        Ok(match self {
-            Address::Path(path) => {
-                let mut file = File::open(path)?;
-                let mut buf = String::new();
-                file.read_to_string(&mut buf)?;
-                buf
-            }
-            Address::Url(url) => {
-                ureq::request_url("GET", url).call()?.into_string()?
-            }
-        })
+        match self {
+            Address::Path(path) => get_file(path),
+            Address::Url(url) => get_http(url),
+        }
     }
 
     /// Join two paths or URLs.
