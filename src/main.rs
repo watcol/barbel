@@ -10,7 +10,7 @@ struct Opts {
         help = "The entry configuration file",
         default_value = "barbel/main.toml"
     )]
-    entry: PathBuf,
+    entry: String,
     #[structopt(
         short,
         long,

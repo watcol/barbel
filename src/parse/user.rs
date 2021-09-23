@@ -1,10 +1,9 @@
 use anyhow::Context;
 use serde::Deserialize;
-use std::{
-    collections::HashMap,
-    path::{Path, PathBuf},
-};
+use std::{collections::HashMap, str::FromStr};
 use toml::Value;
+
+use super::uri::Uri;
 
 #[derive(Clone, Debug, Deserialize)]
 struct TomlEntry {
@@ -15,14 +14,14 @@ struct TomlEntry {
 }
 
 impl TomlEntry {
-    fn into_entry(self, dir: &Path) -> anyhow::Result<Entry> {
+    fn into_entry(self, origin: &Uri) -> anyhow::Result<Entry> {
         Ok(Entry {
             renderer: self
                 .renderer
                 .into_iter()
-                .map(|r| r.into_renderer(dir))
+                .map(|r| r.into_renderer(origin))
                 .collect::<Result<Vec<_>, _>>()?,
-            config: self.config.into_config(dir)?,
+            config: self.config.into_config(origin)?,
         })
     }
 }
@@ -35,10 +34,10 @@ struct TomlRenderer {
 }
 
 impl TomlRenderer {
-    fn into_renderer(self, dir: &Path) -> anyhow::Result<Renderer> {
+    fn into_renderer(self, origin: &Uri) -> anyhow::Result<Renderer> {
         Ok(Renderer {
             source: self.source,
-            config: self.config.into_config(dir)?,
+            config: self.config.into_config(origin)?,
         })
     }
 }
@@ -46,25 +45,22 @@ impl TomlRenderer {
 #[derive(Clone, Debug, Deserialize)]
 struct TomlConfig {
     #[serde(default)]
-    include: Vec<PathBuf>,
+    include: Vec<Uri>,
     #[serde(flatten)]
     table: HashMap<String, Value>,
 }
 
 impl TomlConfig {
-    fn into_config(self, dir: &Path) -> anyhow::Result<HashMap<String, Value>> {
-        let base_dir =
-            dir.parent().context("Connot specify root directory.")?;
+    fn into_config(
+        self,
+        origin: &Uri,
+    ) -> anyhow::Result<HashMap<String, Value>> {
         let mut map = HashMap::new();
-        for path in self.include {
-            let path = if path.is_absolute() {
-                path
-            } else {
-                base_dir.join(path)
-            };
-            let config = super::read(&path)?;
-            let config: TomlConfig = toml::from_str(&config)?;
-            map.extend(config.into_config(&path)?);
+        for uri in self.include {
+            let uri = origin.join(&uri)?;
+            let s = uri.get()?;
+            let config: TomlConfig = toml::from_str(&s)?;
+            map.extend(config.into_config(&uri)?);
         }
         map.extend(self.table);
         Ok(map)
@@ -83,8 +79,11 @@ pub struct Renderer {
     pub config: HashMap<String, Value>,
 }
 
-pub fn parse<P: AsRef<Path>>(path: P) -> anyhow::Result<Entry> {
-    let s = super::read(&path)?;
+pub fn parse<P: AsRef<str>>(path: P) -> anyhow::Result<Entry> {
+    let uri = Uri::from_str(path.as_ref())
+        .ok()
+        .context("Uri parsing error")?;
+    let s = uri.get()?;
     let toml_entry: TomlEntry = toml::from_str(&s)?;
-    toml_entry.into_entry(path.as_ref())
+    toml_entry.into_entry(&uri)
 }
