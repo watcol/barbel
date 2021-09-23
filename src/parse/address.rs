@@ -69,9 +69,9 @@ impl<'de> Deserialize<'de> for Address {
     where
         D: Deserializer<'de>,
     {
-        struct UriVisitor;
+        struct AddressVisitor;
 
-        impl<'de> Visitor<'de> for UriVisitor {
+        impl<'de> Visitor<'de> for AddressVisitor {
             type Value = Address;
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("path or url")
@@ -85,6 +85,6 @@ impl<'de> Deserialize<'de> for Address {
             }
         }
 
-        deserializer.deserialize_str(UriVisitor)
+        deserializer.deserialize_str(AddressVisitor)
     }
 }
