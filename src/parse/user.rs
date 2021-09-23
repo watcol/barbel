@@ -56,10 +56,15 @@ impl TomlConfig {
         let base_dir =
             dir.parent().context("Connot specify root directory.")?;
         let mut map = HashMap::new();
-        for path in self.include.iter() {
-            let config = super::read(base_dir.join(path))?;
+        for path in self.include {
+            let path = if path.is_absolute() {
+                path
+            } else {
+                base_dir.join(path)
+            };
+            let config = super::read(&path)?;
             let config: TomlConfig = toml::from_str(&config)?;
-            map.extend(config.into_config(path)?);
+            map.extend(config.into_config(&path)?);
         }
         map.extend(self.table);
         Ok(map)
