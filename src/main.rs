@@ -22,6 +22,6 @@ struct Opts {
 
 fn main() {
     let opts = Opts::from_args();
-    let entry = parse::user::parse_entry(&opts.entry).unwrap();
+    let entry = parse::user::parse(&opts.entry).unwrap();
     println!("{:?}", entry);
 }
