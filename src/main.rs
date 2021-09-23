@@ -1,7 +1,7 @@
-use serde::Deserialize;
-use std::{collections::HashMap, fs::File, io::Read, path::PathBuf};
+mod parse;
+
+use std::path::PathBuf;
 use structopt::StructOpt;
-use toml::Value;
 
 #[derive(StructOpt, Debug)]
 struct Opts {
@@ -20,34 +20,8 @@ struct Opts {
     outdir: PathBuf,
 }
 
-#[derive(Deserialize, Debug)]
-struct Entry {
-    #[serde(flatten)]
-    global: HashMap<String, Value>,
-    #[serde(default)]
-    include: Vec<PathBuf>,
-    #[serde(default)]
-    renderer: Vec<Renderer>,
-}
-
-#[derive(Deserialize, Debug)]
-struct Renderer {
-    source: String,
-    output: Option<String>,
-    #[serde(default)]
-    include: Vec<PathBuf>,
-    #[serde(flatten)]
-    table: HashMap<String, Value>,
-}
-
 fn main() {
     let opts = Opts::from_args();
-    let toml = {
-        let mut file = File::open(&opts.entry).unwrap();
-        let mut s = String::new();
-        file.read_to_string(&mut s).unwrap();
-        s
-    };
-    let entry: Entry = toml::from_str(&toml).unwrap();
+    let entry = parse::user::parse_entry(&opts.entry).unwrap();
     println!("{:?}", entry);
 }
