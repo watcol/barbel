@@ -67,18 +67,21 @@ impl TomlConfig {
     }
 }
 
+/// The entry of user configurations
 #[derive(Clone, Debug)]
 pub struct Entry {
     pub renderer: Vec<Renderer>,
     pub config: HashMap<String, Value>,
 }
 
+/// Renderer configurations
 #[derive(Clone, Debug)]
 pub struct Renderer {
     pub source: String,
     pub config: HashMap<String, Value>,
 }
 
+/// Parse a toml file into `Entry`.
 pub fn parse<P: AsRef<str>>(path: P) -> anyhow::Result<Entry> {
     let address = Address::from_str(path.as_ref())
         .ok()

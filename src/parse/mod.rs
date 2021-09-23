@@ -1,2 +1,2 @@
-pub mod address;
+mod address;
 pub mod user;

@@ -7,6 +7,7 @@ use serde::{
 };
 use url::Url;
 
+/// Local path or URL(HTTP).
 #[derive(Clone, Debug)]
 pub enum Address {
     Path(PathBuf),
@@ -29,6 +30,7 @@ impl FromStr for Address {
 }
 
 impl Address {
+    /// Get text data from this address.
     pub fn get(&self) -> anyhow::Result<String> {
         Ok(match self {
             Address::Path(path) => {
@@ -43,6 +45,7 @@ impl Address {
         })
     }
 
+    /// Join two paths or URLs.
     pub fn join(&self, other: &Address) -> anyhow::Result<Address> {
         match (self, other) {
             (_, Address::Url(_)) => Ok(other.clone()),
