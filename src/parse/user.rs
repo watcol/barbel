@@ -1,7 +1,10 @@
 use anyhow::Context;
 use serde::Deserialize;
-use std::{collections::HashMap, str::FromStr};
-use toml::Value;
+use std::{
+    collections::{hash_map::Entry as HashMapEntry, HashMap},
+    str::FromStr,
+};
+use toml::{map::Entry as MapEntry, Value};
 
 use super::address::Address;
 
@@ -60,10 +63,45 @@ impl TomlConfig {
             let address = origin.join(&address)?;
             let s = address.get()?;
             let config: TomlConfig = toml::from_str(&s)?;
-            map.extend(config.into_config(&address)?);
+            hashmap_merge(&mut map, config.into_config(&address)?);
         }
-        map.extend(self.table);
+        hashmap_merge(&mut map, self.table);
         Ok(map)
+    }
+}
+
+fn hashmap_merge(
+    origin: &mut HashMap<String, Value>,
+    append: HashMap<String, Value>,
+) {
+    for (k, v) in append {
+        match origin.entry(k) {
+            HashMapEntry::Occupied(mut e) => value_merge(e.get_mut(), v),
+            HashMapEntry::Vacant(e) => {
+                e.insert(v);
+            }
+        }
+    }
+}
+
+fn value_merge(origin: &mut Value, append: Value) {
+    match (origin, append) {
+        (Value::Table(orig), Value::Table(a)) => {
+            for (k, v) in a {
+                match orig.entry(k) {
+                    MapEntry::Vacant(e) => {
+                        e.insert(v);
+                    }
+                    MapEntry::Occupied(mut e) => value_merge(e.get_mut(), v),
+                }
+            }
+        }
+        (Value::Array(orig), Value::Array(mut a)) => {
+            orig.append(&mut a);
+        }
+        (orig, a) => {
+            *orig = a;
+        }
     }
 }
 
@@ -85,7 +123,7 @@ pub struct Renderer {
 pub fn parse<P: AsRef<str>>(path: P) -> anyhow::Result<Entry> {
     let address = Address::from_str(path.as_ref())
         .ok()
-        .context("Uri parsing error")?;
+        .context("Address parsing error")?;
     let s = address.get()?;
     let toml_entry: TomlEntry = toml::from_str(&s)?;
     toml_entry.into_entry(&address)
