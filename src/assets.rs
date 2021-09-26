@@ -1,7 +1,8 @@
-use anyhow::Context;
 use once_cell::sync::Lazy;
+use sha2::Digest;
 use std::{
     env::var,
+    fmt::Write,
     fs::File,
     io::Read,
     path::{Path, PathBuf},
@@ -42,24 +43,23 @@ pub fn http_cache_path(url: &Url) -> anyhow::Result<Option<PathBuf>> {
         Some(cache) => cache.join("sites"),
         None => return Ok(None),
     };
-    let authority = {
-        let host = url.host_str().context("No host")?;
-        match url.port() {
-            Some(port) => format!("{}:{}", host, port),
-            None => host.to_owned(),
+    let hash = {
+        let mut hasher = sha2::Sha256::new();
+        hasher.update(url.as_str().as_bytes());
+        let bytes = hasher.finalize();
+        let mut s = String::with_capacity(2 * bytes.len());
+        for b in bytes {
+            write!(s, "{:02x}", b)?;
         }
+        s
     };
-    path.push(authority);
-    if let Some(segments) = url.path_segments() {
-        for segment in segments {
-            path.push(segment);
-        }
-    }
+    path.push(hash);
     Ok(Some(path))
 }
 
 pub fn get_http(url: &Url) -> anyhow::Result<String> {
-    let _cache_path = http_cache_path(url)?;
+    let _cache_path = http_cache_path(url);
+    println!("{:?}", _cache_path);
     // TODO: Cache load&store.
     Ok(ureq::request_url("GET", url).call()?.into_string()?)
 }
