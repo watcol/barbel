@@ -2,9 +2,8 @@ use once_cell::sync::Lazy;
 use sha2::Digest;
 use std::{
     env::var,
-    fmt::Write,
     fs::File,
-    io::Read,
+    io::{Read, Write},
     path::{Path, PathBuf},
 };
 use url::Url;
@@ -39,6 +38,7 @@ pub fn get_file<P: AsRef<Path>>(path: P) -> anyhow::Result<String> {
 }
 
 pub fn http_cache_path(url: &Url) -> anyhow::Result<Option<PathBuf>> {
+    use std::fmt::Write;
     let mut path = match Lazy::force(&CACHE_DIR) {
         Some(cache) => cache.join("sites"),
         None => return Ok(None),
@@ -58,8 +58,17 @@ pub fn http_cache_path(url: &Url) -> anyhow::Result<Option<PathBuf>> {
 }
 
 pub fn get_http(url: &Url) -> anyhow::Result<String> {
-    let _cache_path = http_cache_path(url);
-    println!("{:?}", _cache_path);
-    // TODO: Cache load&store.
-    Ok(ureq::request_url("GET", url).call()?.into_string()?)
+    if let Some(cache) = http_cache_path(url)? {
+        if cache.exists() {
+            get_file(cache)
+        } else {
+            let res = ureq::request_url("GET", url).call()?.into_string()?;
+            std::fs::create_dir_all(cache.parent().unwrap())?;
+            let mut file = File::create(cache)?;
+            write!(file, "{}", res)?;
+            Ok(res)
+        }
+    } else {
+        Ok(ureq::request_url("GET", url).call()?.into_string()?)
+    }
 }
