@@ -9,10 +9,10 @@ Barbel is a document generator framework. By using distributed templates called 
 you can easily create and maintain various types of documents, setting scripts, etc.
 
 ## Features
-- For user
+- For users
   - [ ] Configuration using TOML
   - [ ] Global options across renderers
-- For developer
+- For developers
   - [ ] Handlebars template engine
   - [ ] Handlebars helper script
 
